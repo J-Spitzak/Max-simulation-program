@@ -152,14 +152,14 @@ class environment():
             extinct = [] # list for extinct species
 
             for population in new:
-                self.populations[population].increment()
-                print(population,  ": " , self.populations[population].population.num)
-                if self.populations[population].population.num <= 0:
+                new[population].increment()
+                print(population,  ": " , new[population].population.num)
+                if new[population].population.num <= 0:
                     print(population, "went extinct")
                     extinct.append(population)
 
             for ex in extinct:
-                self.populations.pop(ex)
+                new.pop(ex)
 
             self.populations = new
             time.sleep(1)
