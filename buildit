@@ -1,0 +1,1 @@
+../jdh/bs/bs.py -i ../jdh/base -p main.js > js/main.js
