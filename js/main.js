@@ -4078,6 +4078,757 @@ function stringsEqual( str1, str2 ) {
 	}
 	return true;
 }
+function TextOutput( x, y, w, h, label ) {
+	Frame.call( this, x, y, w, h, label );
+	this.backgroundRectangle = new FillRectangle( 0, 0, 1, 1 );
+	this.setBackground( new Component( 1, 1, -1, -1 ) );
+	this.getBackground().add( this.backgroundRectangle );
+	this.getBackground().setFillPaint( rgb( 255, 255, 255 ) );
+	this.highlight = new FillRectangle( 10, 0, 0, -.000001 );
+	this.highlight.setFillPaint( rgba( 0, 0, 255, .3 ) );
+	this.highlight.setVisible( false );
+	this.add( this.highlight );
+	this.textBuffer = 10;
+	this.valueText = new Text( this.textBuffer, .5 );
+	this.valueText.setAlignment( ALIGN_CENTERED_RIGHT );
+	this.valueText.setText( "" );
+	this.add( this.valueText );
+	this.hasFocus = false;
+	this.typePos = 0;
+	this.lineWidth = 2;
+	this.dragStart = null;
+	this.dragEnd = null;
+	this.setClip( true );
+	this.noFrame();
+};
+
+TextOutput.prototype = Object.create( Frame.prototype );
+TextOutput.prototype.constructor = TextOutput;
+
+TextOutput.prototype.setText = function( newVal ) {
+	this.label = newVal;
+	this.valueText.setText( newVal );
+	this.valueText.doRedraw();
+}
+
+TextOutput.prototype.getText = function() {
+	return this.valueText.getText();
+};
+
+TextOutput.prototype.setTextBuffer = function( newVal ) {
+	this.textBuffer = newVal;
+}
+
+TextOutput.prototype.getValueText = function() {
+	return this.valueText;
+}
+
+TextOutput.prototype.setHighlightPaint = function( newVal ) {
+	this.highlight.setFillPaint( newVal );
+};
+
+TextOutput.prototype.predraw = function( ins ) {
+	this.drawnScale = ins.scale;
+	this.textW = [];
+	this.textX = this.valueText.trueDrawX;
+	for ( var i = 0; i < this.valueText.getText().length; ++i )
+		this.textW[i] = this.measureText( ins, this.valueText.getText().slice( 0, i ) ).width;
+	this.textW[i] = this.measureText( ins, this.valueText.getText() ).width;
+	if ( this.textW[this.typePos] + this.textX < this.drawX + this.textBuffer ) {
+		this.valueText.setXY( this.textBuffer - this.drawW - this.textW[this.typePos], this.getH() / 2 );
+	}
+	else if ( this.textW[this.typePos] > this.drawW - this.textBuffer ) {
+		this.shiftAmount = this.textW[this.typePos] + this.textBuffer - this.drawW + 2;
+		this.valueText.setXY( this.textBuffer - this.shiftAmount, this.getH() / 2 );
+	}
+	if ( this.highlight.getVisible() ) {
+		if ( this.dragStart > this.dragEnd ) {
+			var dragX1 = this.textW[this.dragEnd] + this.valueText.drawX - this.drawX;
+			var dragX2 = this.textW[this.dragStart] + this.valueText.drawX - this.drawX;
+		}
+		else {
+			var dragX1 = this.textW[this.dragStart] + this.valueText.drawX - this.drawX;
+			var dragX2 = this.textW[this.dragEnd] + this.valueText.drawX - this.drawX;
+		}
+		if ( dragX1 < this.textBuffer )
+			dragX1 = this.textBuffer;
+		if ( dragX2 > this.drawW - this.textBuffer )
+			dragX2 = this.drawW - this.textBuffer;
+		this.highlight.resize( dragX1, 4, dragX2 - dragX1, -4 );
+	}
+	if ( this.textW[this.valueText.getText().length - 1] < ( this.drawW - 2 * this.textBuffer ) || this.textPos === 0 )
+		this.valueText.setXY( this.textBuffer, this.getH() / 2 );
+};
+
+TextOutput.prototype.highlightedText = function() {
+	if ( this.dragStart !== null && this.dragEnd !== null ) {
+		if ( this.dragStart > this.dragEnd )
+			return this.valueText.getText().slice( this.dragEnd, this.dragStart );
+		else
+			return this.valueText.getText().slice( this.dragStart, this.dragEnd );
+	}
+	return null;
+}
+
+TextOutput.prototype.findIndexNear = function( tpos ) {
+	var xpos = tpos;
+	var idx = 0;
+	if ( xpos < this.valueText.trueDrawX )
+		idx = 0;
+	else {
+		var len = this.valueText.getText().length;
+		if ( len === 0 )
+			idx = 0;
+		else if ( xpos > this.drawnScale * this.textW[len-1] + this.valueText.trueDrawX )
+			idx = len;
+		else {
+			var dis = Math.abs( xpos - ( this.textW[0] + this.valueText.trueDrawX ) );
+			idx = 0;
+			for ( var i = 1; i < len; ++i ) {
+				var tDis = Math.abs( xpos - ( this.textW[i] + this.valueText.trueDrawX ) );
+				if ( tDis < dis ) {
+					idx = i;
+					dis = tDis;
+				}
+			}
+		}
+	}
+	return idx;
+};
+
+TextOutput.prototype.handle = function( event ) {
+	switch ( event.type ) {
+		case NEW_FOCUS:
+			if ( event.focusComponent !== this ) {
+				this.hasFocus = false;
+				this.highlight.setVisible( false );
+				event.drawing.doRedraw();
+			}
+			break;
+		case MOUSE_PUSH:
+			if ( this.eventInside( event ) ) {
+				this.hasFocus = true;
+				newFocus( event.e, this );
+				this.typePos = this.findIndexNear( event.px );
+				this.dragStart = this.typePos;
+				this.highlight.setVisible( false );
+				event.drawing.doRedraw();
+				return true;
+			}
+			else {
+				if ( this.hasFocus )
+					event.drawing.doRedraw();
+				this.hasFocus = false;
+			}
+			break;
+		case MOUSE_DRAG:
+			if ( getLastEventComponent() === this ) {
+				if ( this.hasFocus ) {
+					this.typePos = this.findIndexNear( event.px );
+					this.dragEnd = this.typePos;
+					this.highlight.setVisible( true );
+					event.drawing.doRedraw();
+					return true;
+				}
+			}
+			break;
+		case KEY_PRESS:
+			if ( this.hasFocus ) {
+				switch ( event.e.JDHKeyCode ) {
+					case KB_TYPING:
+						if ( copyEvent( event ) ) {
+							if ( this.highlight.getVisible() )
+								setPasteBuffer( this.highlightedText() );
+							return true;
+						}
+						break;
+					case KB_ARROWLEFT:
+						this.typePos = this.typePos - 1;
+						if ( this.typePos < 0 )
+							this.typePos = 0;
+						if ( this.highlight.getVisible() )
+							this.dragEnd = this.typePos;
+						this.doRedraw();
+						return true;
+						break;
+					case KB_ARROWRIGHT:
+						this.typePos = this.typePos + 1;
+						if ( this.typePos > this.valueText.getText().length )
+							this.typePos = this.valueText.getText().length;
+						if ( this.highlight.getVisible() )
+							this.dragEnd = this.typePos;
+						this.doRedraw();
+						return true;
+						break;
+					default:
+						break;
+				}
+			}
+			break;
+	}
+	return false;
+};
+	
+	
+var NO_CURSOR          = 0;
+var LINE_CURSOR        = 1;
+var OUTLINE_CURSOR     = 2;
+var BOX_CURSOR         = 3;
+var UNDERLINE_CURSOR   = 4;
+
+function TextInput( x, y, w, h, label ) {
+	TextOutput.call( this, x, y, w, h, label );
+	this.cursorPaint = rgb( 255, 0, 0 );
+	this.cursorType = LINE_CURSOR;
+	this.changedValuePaint = rgb( 255, 255, 50 );
+	this.setCallbackWhen( ON_ENTER );
+	this.prompt = new Text( this.textBuffer, .5, "enter text" );
+	this.prompt.setVisible( false );
+	this.prompt.setAlignment( ALIGN_CENTERED_RIGHT );
+	this.prompt.setCombinedFontPaint( rgb( 255, 0, 0 ) );
+	this.prompt.setFontItalic( true );
+	this.add( this.prompt );
+	this.lineCursor = new LinePath( 0, 0, 1, 1 );
+	this.lineCursor.m = this.lineCursor.moveTo( 0, 0 );
+	this.lineCursor.l = this.lineCursor.lineTo( 0, 1 );
+	this.lineCursor.setVisible( false );
+	this.valueText.add( this.lineCursor );
+	this.setCursorPaint( rgb( 255, 0, 0 ) );
+	this.conventionalClick = true;
+	this.shiftPressed = false;
+};
+
+TextInput.prototype = Object.create( TextOutput.prototype );
+TextInput.prototype.constructor = TextInput;
+
+TextInput.prototype.setCursorPaint = function( newVal ) {
+	this.cursorPaint = newVal;
+	this.lineCursor.setStrokePaint( this.cursorPaint );
+};
+
+TextInput.prototype.setCursorType = function( newVal ) {
+	this.cursorType = newVal;
+};
+
+TextInput.prototype.setCombinedFontPaint = function( newVal ) {
+	this.valueText.setCombinedFontPaint( newVal );
+};
+
+TextInput.prototype.setChangedValuePaint = function( newVal ) {
+	this.changedValuePaint = newVal;
+};
+
+TextInput.prototype.doCallback = function( when, event ) {
+	var ret = Component.prototype.doCallback.call( this, when, event );
+	if ( ret )
+		this.backgroundRectangle.setFillPaint( null );
+	else
+		this.backgroundRectangle.setFillPaint( this.changedValuePaint );
+	return ret;
+}
+
+TextInput.prototype.predraw = function( ins ) {
+	TextOutput.prototype.predraw.call( this, ins );
+	if ( this.hasFocus ) {
+		this.lineCursor.setVisible( true );
+		this.lineCursor.m.x = this.textW[this.typePos];
+		this.lineCursor.m.y = -ins.fontSize / 2;
+		this.lineCursor.l.x = this.textW[this.typePos];
+		this.lineCursor.l.y = ins.fontSize / 2;
+	}
+	else {
+		this.lineCursor.setVisible( false );
+	}
+}
+
+TextInput.prototype.deleteHighlight = function() {
+	if ( this.dragStart > this.dragEnd ) {
+		this.setText( this.valueText.getText().slice( 0, this.dragEnd ) + this.valueText.getText().slice( this.dragStart, this.valueText.getText().length ) );
+		this.typePos = this.dragEnd;
+	}
+	else {
+		this.setText( this.valueText.getText().slice( 0, this.dragStart ) + this.valueText.getText().slice( this.dragEnd, this.valueText.getText().length ) );
+		this.typePos = this.dragStart;
+	}
+	this.highlight.setVisible( false );
+};
+
+TextInput.prototype.checkAddedText = function( addition, result ) {
+	return true;
+};
+
+TextInput.prototype.setPrompt = function( newText ) {
+	this.prompt.setText( newText );
+}
+
+TextInput.prototype.setDisplayPrompt = function( newVal ) {
+	this.prompt.setVisible( newVal );
+}
+
+TextInput.prototype.handle = function( event ) {
+	switch ( event.type ) {
+		case NEW_FOCUS:
+			if ( event.focusComponent !== this ) {
+				this.hasFocus = false;
+				this.highlight.setVisible( false );
+				event.drawing.doRedraw();
+			}
+			else {
+				this.prompt.setVisible( false );
+				event.drawing.doRedraw();
+			}
+			break;
+		case MOUSE_PUSH:
+			if ( this.conventionalClick )
+				var testClick = true;
+			else {
+				if ( this.shiftPressed )
+					var testClick = true;
+				else
+					var testClick = false;
+			}
+			if ( testClick && this.eventInside( event ) ) {
+				this.hasFocus = true;
+				newFocus( event.e, this );
+				this.typePos = this.findIndexNear( event.px );
+				this.dragStart = this.typePos;
+				this.highlight.setVisible( false );
+				event.drawing.doRedraw();
+				return true;
+			}
+			else {
+				this.highlight.setVisible( false );
+				if ( this.hasFocus )
+					event.drawing.doRedraw();
+				this.hasFocus = false;
+			}
+			break;
+		case MOUSE_DRAG:
+			if ( getLastEventComponent() === this ) {
+				if ( this.hasFocus ) {
+					this.typePos = this.findIndexNear( event.px );
+					this.dragEnd = this.typePos;
+					this.highlight.setVisible( true );
+					event.drawing.doRedraw();
+					return true;
+				}
+			}
+			break;
+		case KEY_DOWN:
+			if ( event.e.key === "Shift" )
+				this.shiftPressed = true;
+			break;
+		case KEY_PRESS:
+			if ( this.hasFocus ) {
+				this.setDisplayPrompt( false );
+				if ( event.e.key === "Shift" )
+					this.shiftPressed = false;
+				switch ( event.e.JDHKeyCode ) {
+					case KB_TYPING:
+						var absorbedKey = false;
+						if ( cutEvent( event ) ) {
+							absorbedKey = true;
+							if ( this.highlight.getVisible() ) {
+								setPasteBuffer( this.highlightedText() );
+								this.deleteHighlight();
+								this.highlight.setVisible( false );
+							}
+						}
+						if ( !absorbedKey && copyEvent( event ) ) {
+							absorbedKey = true;
+							if ( this.highlight.getVisible() )
+								setPasteBuffer( this.highlightedText() );
+						}
+						if ( !absorbedKey && pasteEvent( event ) ) {
+							absorbedKey = true;
+							if ( this.highlight.getVisible() )
+								this.deleteHighlight();
+							var pasteStuff = getPasteBuffer();
+							var tryText = this.valueText.getText().slice( 0, this.typePos ) + pasteStuff +
+											this.valueText.getText().slice( this.typePos, this.valueText.getText().length );
+							if ( this.checkAddedText( pasteStuff, tryText ) ) {
+								if ( pasteStuff !== null ) {
+									this.setText( tryText );
+									this.typePos = this.typePos + pasteStuff.length;
+								}
+								this.highlight.setVisible( false );
+							}
+							else
+								return false;
+						}
+						if ( !absorbedKey ) {
+							if ( this.highlight.getVisible() )
+								this.deleteHighlight();
+							var tryText = this.valueText.getText().slice( 0, this.typePos ) + event.e.key + 
+											this.valueText.getText().slice( this.typePos, this.valueText.getText().length );
+							if ( this.checkAddedText( event.e.key, tryText ) ) {
+								this.setText( tryText );
+								this.typePos = this.typePos + 1;
+								this.highlight.setVisible( false );
+							}
+							else
+								return false;
+						}
+						this.doCallback( ON_CHANGE );
+						this.doRedraw();
+						return true;
+						break;
+					case KB_ARROWLEFT:
+						this.typePos = this.typePos - 1;
+						if ( this.typePos < 0 )
+							this.typePos = 0;
+						if ( this.highlight.getVisible() )
+							this.dragEnd = this.typePos;
+						this.doRedraw();
+						return true;
+						break;
+					case KB_ARROWRIGHT:
+						this.typePos = this.typePos + 1;
+						if ( this.typePos > this.valueText.getText().length )
+							this.typePos = this.valueText.getText().length;
+						if ( this.highlight.getVisible() )
+							this.dragEnd = this.typePos;
+						this.doRedraw();
+						return true;
+						break;
+					case KB_BACKSPACE:
+						if ( this.highlight.getVisible() )
+							this.deleteHighlight();
+						else {
+							if ( this.typePos > 0 ) {
+								this.typePos = this.typePos - 1;
+								this.setText( this.valueText.getText().slice( 0, this.typePos ) + this.valueText.getText().slice( this.typePos + 1, this.valueText.getText().length ) );
+								this.highlight.setVisible( false );
+							}
+						}
+						this.doCallback( ON_CHANGE );
+						this.doRedraw();
+						break;
+					case KB_DELETE:
+						if ( this.highlight.getVisible() )
+							this.deleteHighlight();
+						else {
+							if ( this.typePos < this.valueText.getText().length ) {
+								this.valueText.setText( this.valueText.getText().slice( 0, this.typePos ) + this.valueText.getText().slice( this.typePos + 1, this.valueText.getText().length ) );
+								this.highlight.setVisible( false );
+							}
+						}
+						this.doCallback( ON_CHANGE );
+						this.doRedraw();
+						break;
+					case KB_ENTER:
+						this.doCallback( ON_ENTER );
+						this.doRedraw();
+						break;
+				}
+			}
+			break;
+	}
+	return false;
+};
+	
+	
+function ValueInput( x, y, w, h, label ) {
+	TextInput.call( this, x, y, w, h, label );
+	this.minimum = null;
+	this.maximum = null;
+	this.precision = null;
+	this.tmpPrecision = null;
+	this.stepSize = 1;
+	this.value = 0;
+	this.stringSub = null;
+	this.setValue( 0 );
+	this.minCallback = null;
+	this.minCallbackComponent = null;
+	this.maxCallback = null;
+	this.maxCallbackComponent = null;
+	this.addCallbackWhen( ON_MOUSE_WHEEL );
+	this.addCallbackWhen( ON_ARROW_KEY );
+	this.stepSizeLock = false;
+	this.stepSizeMin = null;
+	this.stepSizeMax = null;
+};
+
+ValueInput.prototype = Object.create( TextInput.prototype );
+ValueInput.prototype.constructor = ValueInput;
+
+ValueInput.prototype.setStringSubstitution = function( newVal ) {
+	this.stringSub = newVal;
+	this.setStepSizeLock( true );  //  Ignores the cursor position as a stepSize determiner
+	this.setMinimum( 0 );
+	this.setMaximum( this.stringSub.length - 1 );
+}
+
+ValueInput.prototype.setStepSize = function( newVal ) {
+	this.stepSize = newVal;
+};
+
+ValueInput.prototype.setStepSizeLock = function( newVal ) {
+	this.stepSizeLock = newVal;
+};
+
+ValueInput.prototype.setStepSizeMinimum = function( newVal ) {
+	this.stepSizeMin = newVal;
+};
+
+ValueInput.prototype.setStepSizeMaximum = function( newVal ) {
+	this.stepSizeMax = newVal;
+};
+
+ValueInput.prototype.setMinimum = function( newVal ) {
+	this.minimum = newVal;
+	if ( this.value < this.minimum )
+		this.setValue( this.minimum );
+};
+
+ValueInput.prototype.setMaximum = function( newVal ) {
+	this.maximum = newVal;
+	if ( this.value > this.maximum )
+		this.setValue( this.maximum );
+};
+
+ValueInput.prototype.setMinimumCallback = function( newCallback, newComponent ) {
+	if ( newComponent === undefined )
+		this.minCallbackComponent = null;
+	else
+		this.minCallbackComponent = newComponent;
+	this.minCallback = newCallback;
+}
+
+ValueInput.prototype.setMaximumCallback = function( newCallback, newComponent ) {
+	if ( newComponent === undefined )
+		this.maxCallbackComponent = null;
+	else
+		this.maxCallbackComponent = newComponent;
+	this.maxCallback = newCallback;
+}
+
+ValueInput.prototype.setValue = function( newVal ) {
+	var oldValue = this.value;
+	this.value = newVal;
+	if ( typeof( this.value ) !== "number" )
+		this.value = parseFloat( this.value );
+	if ( isNaN( this.value ) )
+		this.value = 0.0;
+	if ( this.minimum !== null ) {
+		if ( newVal < this.minimum ) {
+			this.value = this.minimum;
+			if ( this.minCallback !== null )
+				this.minCallback( this.minCallbackComponent );
+		}
+	}
+	if ( this.maximum !== null ) {
+		if ( newVal > this.maximum ) {
+			this.value = this.maximum;
+			if ( this.maxCallback !== null )
+				this.maxCallback( this.maxCallbackComponent );
+		}
+	}
+	var valueSet = false;
+	if ( this.stringSub != null ) {
+		if ( this.value > -1 && this.value < this.stringSub.length ) {
+			if ( this.stringSub[this.value] !== null ) {
+				this.valueText.setText( this.stringSub[this.value] );
+				valueSet = true;
+			}
+		}
+	}
+	if ( !valueSet ) {
+		if ( this.precision !== null && this.precision > -1 )
+			this.valueText.setText( this.value.toFixed( this.precision ) );//.toString() );
+		else if ( this.tmpPrecision !== null )
+			this.valueText.setText( this.value.toFixed( this.tmpPrecision ) );//.toString() );
+		else
+			this.valueText.setText( this.value.toString() );
+	}
+};
+
+ValueInput.prototype.suggestPrecision = function( range, minimum ) {
+	if ( minimum === undefined || minimum === null )
+		minimum = 1;
+	var val = Math.log10( Math.abs( range ) );
+	val = 2 - parseInt( val );
+	if ( val < minimum ) {
+		return minimum;
+	}
+	return val;
+}
+
+ValueInput.prototype.setPrecision = function( newPrecision ) {
+	this.precision = newPrecision;
+};
+
+ValueInput.prototype.getValue = function() {
+	return this.value;
+};
+
+ValueInput.prototype.setAlignment = function( newVal ) {
+	this.valueText.setAlignment( newVal );
+};
+
+ValueInput.prototype.checkStepSize = function() {
+	if ( this.stepSizeLock )
+		return;
+	var txt = this.valueText.getText();
+	this.stepSize = 1.0;
+	var decimalHit = false;
+	for ( var i = 0; i < txt.length; ++i ) {
+		if ( txt.charAt( i ) === '.' )
+			decimalHit = true;
+		else if ( txt.charAt( i ) != '+' && txt.charAt( i ) != '-' ) {
+			if ( decimalHit && i < this.typePos )
+				this.stepSize = this.stepSize / 10.0;
+			else if ( !decimalHit && i >= this.typePos )
+				this.stepSize = this.stepSize * 10.0;
+		}
+	}
+	if ( this.stepSizeMin !== null && this.stepSize < this.stepSizeMin )
+		this.stepSize = this.stepSizeMin;
+	if ( this.stepSizeMax !== null && this.stepSize > this.stepSizeMax )
+		this.stepSize = this.stepSizeMax;
+};
+
+ValueInput.prototype.deleteHighlight = function() {
+	if ( this.dragStart > this.dragEnd )
+		var oldDiff = this.valueText.getText().length - this.dragStart;
+	else
+		var oldDiff = this.valueText.getText().length - this.dragEnd;
+	TextInput.prototype.deleteHighlight.call( this );
+	this.typePos = this.valueText.getText().length - oldDiff;
+};
+
+ValueInput.prototype.checkAddedText = function( addition, result ) {
+	var tryIt = parseFloat( result );
+	if ( isNaN( tryIt ) )
+		return false;
+	var okayString = true;
+	for ( var i = 0; i < addition.length; ++i ) {
+		var tokay = false;
+		var c = addition.charAt( i );
+		if ( c >= '0' && c <= '9' )
+			tokay = true;
+		else if ( c === '+' || c === '-' || c === "." )
+			tokay = true;
+		else if ( c === 'e' || c === 'E' )
+			tokay = true;
+		if ( !tokay )
+			okayString = false;
+	}
+	return okayString;
+};
+
+ValueInput.prototype.doCallback = function( when ) {
+	var txt = this.valueText.getText();
+	this.value = parseFloat( txt );
+	var ret = TextInput.prototype.doCallback.call( this, when );
+	return ret;
+}
+
+ValueInput.prototype.displayedPrecision = function() {
+	var txt = this.valueText.getText();
+	var val = txt.indexOf( "." );
+	if ( val === -1 )
+		return 0;
+	else
+		return txt.length - val - 1;
+}
+
+ValueInput.prototype.getCursorPosition = function() {
+	var txt = this.valueText.getText();
+	var posFound = false;
+	var distCount = 0;
+	var highSide = true;
+	var quitNow = false;
+	for ( var i = 0; i < txt.length && !quitNow; ++i ) {
+		if ( !posFound && i === this.typePos )
+			posFound = true;
+		if ( highSide ) {
+			if ( txt.charAt( i ) === '.' ) {
+				if ( posFound )
+					quitNow = true;
+				else {
+					highSide = false;
+					distCount = 0;
+				}
+			}
+			else if ( posFound )
+				distCount = distCount + 1;
+		}
+		else if ( !posFound )
+			distCount = distCount + 1;
+	}
+	return [ distCount, highSide ];
+}
+
+ValueInput.prototype.setCursorPosition = function( arg ) {
+	var distCount = arg[0];
+	var highSide = arg[1];
+	var txt = this.valueText.getText();
+	var ptPos = txt.indexOf( '.' );
+	if ( highSide ) {
+		if ( ptPos === -1 ) //  No decimal place found
+			this.typePos = txt.length - distCount;
+		else
+			this.typePos = ptPos - distCount;
+	}
+	else {
+		if ( ptPos === -1 )
+			this.typePos = txt.length;
+		else
+			this.typePos = ptPos + 1 + distCount;
+	}
+
+}
+
+ValueInput.prototype.handle = function( event ) {
+	if ( TextInput.prototype.handle.call( this, event ) ) {
+		this.checkStepSize();
+		return true;
+	}
+	switch ( event.type ) {
+		case MOUSE_WHEEL:
+			if ( this.hasFocus ) {
+				this.tmpPrecision = this.displayedPrecision();
+				var cursorSet = this.getCursorPosition();
+				this.setValue( this.value + event.delta * this.stepSize );
+				this.tmpPrecision = null;
+				this.setCursorPosition( cursorSet );
+				this.doCallback( ON_MOUSE_WHEEL );
+				this.doRedraw();
+				return true;
+			}
+			break;
+		case KEY_DOWN:
+			if ( this.hasFocus ) { //&& this.eventInside( event ) ) {
+				switch ( event.e.JDHKeyCode ) {
+					case KB_ARROWUP:
+						this.tmpPrecision = this.displayedPrecision();
+						var cursorSet = this.getCursorPosition();
+						this.setValue( this.value + this.stepSize );
+						this.tmpPrecision = null;
+						this.setCursorPosition( cursorSet );
+						this.doCallback( ON_ARROW_KEY );
+						this.doRedraw();
+						return true;
+						break;
+					case KB_ARROWDOWN:
+						this.tmpPrecision = this.displayedPrecision();
+						var cursorSet = this.getCursorPosition();
+						this.setValue( this.value - this.stepSize );
+						this.tmpPrecision = null;
+						this.setCursorPosition( cursorSet );
+						this.doCallback( ON_ARROW_KEY );
+						this.doRedraw();
+						return true;
+						break;
+				}
+			}
+			break;
+	}
+	return false;
+};
+	
+	
 function Browser( x, y, w, h, label ) {
 	Component.call( this, x, y, w, h, label );
 	this.horizontal = false;
@@ -5015,23 +5766,56 @@ testDrawing = new JDHDrawing( "testDraw" );
 browserArea = new Component( 0, 0, 250, 1 );
 testDrawing.add( browserArea );
 browserArea.setClip( true );
-browserArea.setFontSize( 14 );
-browserTree = new Browser( 0, 0, 1, 1 );
-browserArea.add( browserTree );
-theTop = new BrowserItem( 0, 0, 1, 24, "top" );
-theTop.addBrowser();
-browserTree.add( theTop );
-items = [];
-for ( var i = 0; i < 10; ++i ) {
-    items[i] = new BrowserItem( 0, 0, 1, 24, ( "Item " + i ) );
-    theTop.addBrowserItem( items[i] );
+
+bg = new Frame( 0, 0, 1, 1 );
+
+bg.setCombinedPaint( rgb( 150, 150, 150 ) );
+
+testDrawing.add( bg );
+
+
+
+/*
+text1 = new Text( 100, 95, "TextInput:" );
+testDrawing.add( text1 );
+
+
+input1 = new TextInput( 100, 100, 200, 30 );
+
+text2 = new Text( 400, 95, "TextOutput:" );
+
+testDrawing.add( text2 );
+
+output1 = new TextOutput( 400, 100, 200, 30 );
+output1.setText( "" );
+
+testDrawing.add( output1 );
+
+
+function input1CB() {
+    output1.setText( input1.getText() );
 }
-items[2].addBrowser();
-for ( var i = 0; i < 5; ++i )
-    items[2].addBrowserItem( new BrowserItem( 0, 0, 1, 24, ( "Subitem " + i ) ) );
-items[4].addControlArea( 100 );
-button = new BoxButton( 25, 25, 200, 40, "Button" );
-items[4].addControl( button );
-browserTree.add( new BrowserItem( 0, 0, 1, 24, "another" ) );
+
+input1.setCallback( input1CB );
+
+testDrawing.add( input1 );
+
+*/
+
+text3 = new Text( 100, 245, "Worms:" );
+testDrawing.add( text3 );
+
+input2 = new ValueInput( 100, 250, 200, 30 );
+testDrawing.add( input2 );
+
+text3 = new Text( 100, 345, "Crows:" );
+testDrawing.add( text3 );
+
+input2 = new ValueInput( 100, 350, 200, 30 );
+testDrawing.add( input2 );
+
+
+
+
 
 resize();

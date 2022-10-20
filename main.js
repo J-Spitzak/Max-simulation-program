@@ -9,10 +9,12 @@
 //==============================================================================
 //BSInclude JDH.js
 //BSInclude frame.js
+//BSInclude textInput.js
+//BSInclude valueInput.js
 //BSInclude browser.js
 //BSInclude browserItem.js
 //BSInclude scrollArea.js
-//BSInclude boxButton.js\
+//BSInclude boxButton.js
 
 //  Create an area for the browser.
 testDrawing = new JDHDrawing( "testDraw" );
@@ -20,35 +22,56 @@ browserArea = new Component( 0, 0, 250, 1 );
 testDrawing.add( browserArea );
 //browserArea = new ScrollArea( 0, 0, 250, 1 );
 browserArea.setClip( true );
-// browserArea.setCombinedFontPaint( rgb( 0, 0, 0 ) );
-// browserArea.setBackground( new FillRectangle( 0, 0, 1, 1, null ) );
-// browserArea.setBackgroundPaint( "#777777" );
-// browserArea.setForeground( new Rectangle( 1, 1, -1, -1, null ) );
-//  Set the font to something reasonable.
-browserArea.setFontSize( 14 );
-//  Add a browser that fills the area.
-browserTree = new Browser( 0, 0, 1, 1 );
-browserArea.add( browserTree );
-//  This is a "top level" item.
-theTop = new BrowserItem( 0, 0, 1, 24, "top" );
-theTop.addBrowser();
-browserTree.add( theTop );
-//  Add ten items to the top level.
-items = [];
-for ( var i = 0; i < 10; ++i ) {
-    items[i] = new BrowserItem( 0, 0, 1, 24, ( "Item " + i ) );
-    theTop.addBrowserItem( items[i] );
+
+bg = new Frame( 0, 0, 1, 1 );
+
+bg.setCombinedPaint( rgb( 150, 150, 150 ) );
+
+testDrawing.add( bg );
+
+
+
+/*
+text1 = new Text( 100, 95, "TextInput:" );
+testDrawing.add( text1 );
+
+
+input1 = new TextInput( 100, 100, 200, 30 );
+
+text2 = new Text( 400, 95, "TextOutput:" );
+
+testDrawing.add( text2 );
+
+output1 = new TextOutput( 400, 100, 200, 30 );
+output1.setText( "" );
+
+testDrawing.add( output1 );
+
+
+function input1CB() {
+    output1.setText( input1.getText() );
 }
-//  Make the 3rd item another list of five items.
-items[2].addBrowser();
-for ( var i = 0; i < 5; ++i )
-    items[2].addBrowserItem( new BrowserItem( 0, 0, 1, 24, ( "Subitem " + i ) ) );
-//  Make the 5th item open an area for controls - 100 pixels high.
-items[4].addControlArea( 100 );
-//  Add something to it - a button in this case.
-button = new BoxButton( 25, 25, 200, 40, "Button" );
-items[4].addControl( button );
-//  Another top level item.
-browserTree.add( new BrowserItem( 0, 0, 1, 24, "another" ) );
+
+input1.setCallback( input1CB );
+
+testDrawing.add( input1 );
+
+*/
+
+text3 = new Text( 100, 245, "Worms:" );
+testDrawing.add( text3 );
+
+input2 = new ValueInput( 100, 250, 200, 30 );
+testDrawing.add( input2 );
+
+text3 = new Text( 100, 345, "Crows:" );
+testDrawing.add( text3 );
+
+input2 = new ValueInput( 100, 350, 200, 30 );
+testDrawing.add( input2 );
+
+
+
+
 
 resize();
