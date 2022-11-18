@@ -17,8 +17,8 @@ class populations {
         // returns how well a certain population has done based
         // on the success of it's dependencies
 
-        var dp_type_score = [];
-        var importance = [];
+        var dp_type_score : any = [];
+        var importance : any = [];
 
         for (var dependencyType = 0; dependencyType < this.dependencies.length; dependencyType++){
             var score = 0;
@@ -38,7 +38,47 @@ class populations {
 
                 //print(dependency[0].population.Zscore() , dependency[1])
             }
+
+            importance.push(dependencyType[1]);
+
+            dp_type_score.push(score);
         }
+
+        for (var i = 0; i < dp_type_score.length;i++){
+            final += dp_type_score[i] * importance[i];
+        }
+
+        return final;
+    }
+
+    increment(){
+        //this function is the heart of the simulation, it is called on every population in every run instance
+        // it is called in the run method of environment
+
+        var pop = this.population.num;
+        //^ variable is created to store the previose population number
+        // so that it can be used by the rest of the simulation
+
+        this.population.num += Math.floor((this.dependencies_calc() / 150) * this.population.stddev * mapped_number());
+        // ^ adding the success of dependencies to the population
+
+        this.population.num -= Math.floor((this.predaDeck / 20) * mapped_number());
+        // ^ reducing population by the success of predators
+
+        this.predaDeck = 0;
+        // ^ resseting the score for success of the predators
+
+        // returning previose population number to stay consistent 
+
+        return pop;
+    }
+
+    print(name = null){
+        if (name != null){
+            console.log(name, ":");
+        }
+        console.log("dependencies: ", this.dependencies);
+        console.log("mean ", this.population.mean, "number: ", this.population.num, "standard dev: ", this.population.stddev);
     }
 
 }
