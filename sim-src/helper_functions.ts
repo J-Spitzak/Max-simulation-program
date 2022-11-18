@@ -11,10 +11,10 @@ function mapped_number() : number {
 
 class NCurve {
 
-    num : number;
+    num;
     zScore : number;
-    stddev : number;
-    mean : number;
+    stddev;
+    mean;
 
 
     constructer(num = null, 
@@ -23,21 +23,15 @@ class NCurve {
         zScore = null)
         {
 
+            this.num = num;
+            this.mean = mean;
+            this.stddev = stddev;
             if (zScore != null){
                 this.zScore = zScore;
             }
             else {
                 this.zScore = this.Zscore();
             }
-
-
-            if (stddev != null){
-                this.stddev = stddev;
-            }
-            else {
-                this.stddev = this.StdDev();
-            }
-            
 
         }
 
