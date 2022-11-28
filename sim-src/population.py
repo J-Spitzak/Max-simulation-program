@@ -23,7 +23,8 @@ class population():
         for dependencyType in self.dependencies:            
             score = 0 #how well each dependecy is satisfied
 
-            for dependency in dependencyType[0]:
+            for dependency in dependencyType[0]: # the first item is a list of each...
+                #dependency that supplies for that type, the second is the importance
 
                 #how well each dependency source supplies that dependency
 
