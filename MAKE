@@ -1,0 +1,2 @@
+tsc sim-src/environment.ts sim-src/helper_functions.ts sim-src/population.ts sim-src/main.ts
+../jdh/bs/bs.py -i ../jdh/base -p main.js > js/main.js 

@@ -1,0 +1,1 @@
+rm sim-src/environment.js sim-src/helper_functions.js sim-src/population.js sim-src/main.js
