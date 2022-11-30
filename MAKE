@@ -1,3 +1,2 @@
-../jdh/bs/bs.py -i ./sim-src -p sim-src/environment.ts > js/environment.ts
-tsc js/environment.ts
-../jdh/bs/bs.py -i ../jdh/base -p main.js > js/main.js 
+../jdh/bs/bs.py -i ./sim-src -p sim-src/main.js > js/simultation.js
+../jdh/bs/bs.py -i ../jdh/base -p js/simultation.js > js/main.js 

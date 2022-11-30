@@ -1,6 +1,4 @@
-//BSInclude helper_functions.ts
 
-//BSInclude population.ts
 
 class environment {
 
@@ -28,7 +26,7 @@ class environment {
             // ^ creating new copy of population values to store new values...
             // isolated from old ones that the simulation is running on
 
-            var extinct : any = [];
+            var extinct = [];
 
             for (const population in New) {
                 New[population].increment();
@@ -54,3 +52,4 @@ class environment {
         }
     }
 }
+

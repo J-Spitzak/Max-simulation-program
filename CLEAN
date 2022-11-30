@@ -1,1 +1,1 @@
-rm js/environment.js js/environment.ts js/main.js
+rm js/simulation.js js/main.js

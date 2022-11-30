@@ -1,12 +1,12 @@
 
 
 class populations {
-    initial : number;
-    population : any;
-    dependencies : any;
-    predaDeck : number;
+    initial;
+    population;
+    dependencies;
+    predaDeck;
 
-    populations(initial_pop : number, mean : number, stddev : number){
+    populations(initial_pop, mean, stddev){
         this.initial = initial_pop;
         this.population = new NCurve(initial_pop, mean, stddev);
         this.dependencies = [];
@@ -19,8 +19,8 @@ class populations {
         // returns how well a certain population has done based
         // on the success of it's dependencies
 
-        var dp_type_score : any = [];
-        var importance : any = [];
+        var dp_type_score = [];
+        var importance = [];
 
         for (var dependencyType = 0; dependencyType < this.dependencies.length; dependencyType++){
             var score = 0;

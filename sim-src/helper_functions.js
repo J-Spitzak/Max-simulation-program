@@ -1,6 +1,8 @@
-function mapped_number() : number {
+
+
+function mapped_number() {
     // creates a random number beetween 0 and 1
-    var num : number = Math.random();
+    var num = Math.random();
 
     //makes the range of the number beetween .5 and 1.5
     num += .5;
@@ -12,7 +14,7 @@ function mapped_number() : number {
 class NCurve {
 
     num;
-    zScore : number;
+    zScore ;
     stddev;
     mean;
 
@@ -35,11 +37,11 @@ class NCurve {
 
         }
 
-    Zscore() : number{
+    Zscore() {
         return (this.num - this.mean) / this.stddev;
     }
 
-    StdDev() : number{
+    StdDev() {
         return (this.num - this.mean) / this.zScore;
     }
 };
