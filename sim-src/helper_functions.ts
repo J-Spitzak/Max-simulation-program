@@ -42,4 +42,5 @@ class NCurve {
     StdDev() : number{
         return (this.num - this.mean) / this.zScore;
     }
-}
+};
+

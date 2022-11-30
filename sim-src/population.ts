@@ -1,3 +1,5 @@
+
+
 class populations {
     initial : number;
     population : any;
@@ -6,7 +8,7 @@ class populations {
 
     populations(initial_pop : number, mean : number, stddev : number){
         this.initial = initial_pop;
-        this.population = NCurve(initial_pop, mean, stddev);
+        this.population = new NCurve(initial_pop, mean, stddev);
         this.dependencies = [];
         this.predaDeck = 0;
     }
@@ -81,4 +83,5 @@ class populations {
         console.log("mean ", this.population.mean, "number: ", this.population.num, "standard dev: ", this.population.stddev);
     }
 
-}
+};
+

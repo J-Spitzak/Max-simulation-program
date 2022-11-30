@@ -1,3 +1,7 @@
+//BSInclude helper_functions.ts
+
+//BSInclude population.ts
+
 class environment {
 
     populations = {};
@@ -10,8 +14,8 @@ class environment {
     }
 
     pop_setup(){
-        this.populations["birds"] = population(500, 450, 100);
-        this.populations["worms"] = population(2500, 3000, 400);
+        this.populations["birds"] = populations(500, 450, 100);
+        this.populations["worms"] = populations(2500, 3000, 400);
         this.populations["birds"].dependencies = [[[[self.populations["worms"],5]],5]];
         this.printPop();
         //this function is no longer called, the  "setup" function in this class is currently what is run...
