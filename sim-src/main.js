@@ -1,4 +1,15 @@
 
+//BSInclude JDH.js
+
+//BSInclude frame.js
+
+//BSInclude textInput.js
+
+//BSInclude valueInput.js
+
+
+
+
 //BSInclude helper_functions.js
 
 
@@ -6,12 +17,6 @@
 
 
 //BSInclude environment.js
-
-
-//BSInclude JDH.js
-//BSInclude frame.js
-//BSInclude textInput.js
-//BSInclude valueInput.js
 
 
 //My code
