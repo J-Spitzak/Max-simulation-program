@@ -19,6 +19,9 @@
 //BSInclude environment.js
 
 
+//BSInclude xyPlot.js
+
+
 //My code
 
 
@@ -34,9 +37,11 @@ testDrawing.add( text2 );
 output1 = new TextOutput( 400, 100, 200, 30 );
 output1.setText( "" );
 testDrawing.add( output1 );
+
 function input1CB() {
     output1.setText( input1.getText() );
 }
+
 input1.setCallback( input1CB );
 testDrawing.add( input1 );
 text3 = new Text( 100, 245, "ValueInput:" );
@@ -44,5 +49,12 @@ testDrawing.add( text3 );
 input2 = new ValueInput( 100, 250, 200, 30 );
 //input2.setPrecision( 5 );
 testDrawing.add( input2 );
+
+
+newPlot = new XYPlot( 0, 0, 1, 1 );
+newPlot.setXLimits( 0.0, 100.0 );
+newPlot.setYLimits( -90.0, 90.0 ); 
+
+testDrawing.add( newPlot );
 
 resize();
