@@ -1,0 +1,4 @@
+rm js/simulation.js js/main.js
+../jdh/bs/bs.py -i ./sim-src sim-src/main.js > js/simulation.js
+../jdh/bs/bs.py -i ../jdh/base js/simulation.js > js/main.js 
+open ./index.html

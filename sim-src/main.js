@@ -53,9 +53,12 @@ input2 = new ValueInput( 100, 250, 200, 30 );
 testDrawing.add( input2 ); */
 
 
-newPlot = new XYPlot( 0.1, 0.1, .8, .8 );
+newPlot = new XYPlot( 0.3, 0.1, .8, .8 );
 newPlot.setXLimits( 0.0, 100.0 );
-newPlot.setYLimits( -90.0, 90.0 ); 
+newPlot.setYLimits( -90.0, 90.0 );
+
+
+newPlot.addPoints( [1,5,10], [2,5,-20]);
 
 testDrawing.add( newPlot );
 
