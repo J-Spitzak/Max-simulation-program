@@ -12,9 +12,9 @@ class environment {
     }
 
     pop_setup(){
-        this.populations["birds"] = populations(500, 450, 100);
-        this.populations["worms"] = populations(2500, 3000, 400);
-        this.populations["birds"].dependencies = [[[[self.populations["worms"],5]],5]];
+        this.populations["birds"] = new populations(500, 450, 100);
+        this.populations["worms"] = new populations(2500, 3000, 400);
+        this.populations["birds"].dependencies = [[[[this.populations["worms"],5]],5]];
         this.printPop();
         //this function is no longer called, the  "setup" function in this class is currently what is run...
         //and sets up the populations based on user input
