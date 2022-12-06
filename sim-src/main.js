@@ -29,7 +29,9 @@ testDrawing = new JDHDrawing( "testDraw" );
 bg = new Frame( 0, 0, 1, 1 );
 bg.setCombinedPaint( rgb( 150, 150, 150 ) );
 testDrawing.add( bg );
-text1 = new Text( 100, 95, "TextInput:" );
+
+
+/* text1 = new Text( 100, 95, "TextInput:" );
 testDrawing.add( text1 );
 input1 = new TextInput( 100, 100, 200, 30 );
 text2 = new Text( 400, 95, "TextOutput:" );
@@ -48,10 +50,10 @@ text3 = new Text( 100, 245, "ValueInput:" );
 testDrawing.add( text3 );
 input2 = new ValueInput( 100, 250, 200, 30 );
 //input2.setPrecision( 5 );
-testDrawing.add( input2 );
+testDrawing.add( input2 ); */
 
 
-newPlot = new XYPlot( 0, 0, 1, 1 );
+newPlot = new XYPlot( 0.1, 0.1, .8, .8 );
 newPlot.setXLimits( 0.0, 100.0 );
 newPlot.setYLimits( -90.0, 90.0 ); 
 
