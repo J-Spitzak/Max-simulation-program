@@ -1,1 +1,1 @@
-rm js/simulation.js js/main.js
+rm js/simulation.js js/main.js js/nodeSim.js

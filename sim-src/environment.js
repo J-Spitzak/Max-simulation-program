@@ -1,12 +1,17 @@
 
 
+//environment.js
+
 class environment {
 
     populations = {};
 
     printPop(){
         console.log(this.populations);
-        for (let i = 0; i < Object.keys(this.populations).length; i++){
+        /* for (let i = 0; i < Object.keys(this.populations).length; i++){
+            console.log(Object.keys(this.populations)[i], " = ", this.populations[this.populations[i]].print());
+        } */
+        for (const i in Object.keys(this.populations)){
             console.log(Object.keys(this.populations)[i], " = ", this.populations[this.populations[i]].print());
         }
     }

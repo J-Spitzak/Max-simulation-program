@@ -13,19 +13,13 @@
 
 
 
-//BSInclude helper_functions.js
-
-
-//BSInclude population.js
-
-
-//BSInclude environment.js
+//BSInclude simulation.js
 
 
 
 
 
-//My code
+//My code (main.js)
 
 
 testDrawing = new JDHDrawing( "testDraw" );
@@ -58,15 +52,6 @@ testDrawing.add( input2 );
 
 
 
-env = new environment();
-env.pop_setup();
-env.run();
-
-
-
-
-
-
 newPlot = new XYPlot( 0.5, 0.1, .4, .8 );
 newPlot.setXLimits( 0.0, 100.0 );
 newPlot.setYLimits( -90.0, 90.0 );
@@ -75,9 +60,5 @@ newPlot.setYLimits( -90.0, 90.0 );
 newPlot.addPoints( [1,5,10], [2,5,-20]);
 
 testDrawing.add( newPlot );
-
-env = new environment();
-env.pop_setup();
-env.run();
 
 resize();

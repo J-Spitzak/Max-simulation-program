@@ -1,4 +1,4 @@
-
+// (helper functions.js)
 
 function mapped_number() {
     // creates a random number beetween 0 and 1
