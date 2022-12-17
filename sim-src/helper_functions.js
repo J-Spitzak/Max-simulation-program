@@ -39,7 +39,3 @@ class NCurve {
     }
   }
   
-  const c = new NCurve(600, 500, 200);
-  
-  console.log(c.Zscore);
-  
