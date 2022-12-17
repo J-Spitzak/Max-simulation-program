@@ -80,6 +80,7 @@ class populations {
             console.log(name, ":");
         }
         console.log("dependencies: ", this.dependencies);
+        console.log(this.population);
         console.log("mean ", this.population.mean, "number: ", this.population.num, "standard dev: ", this.population.stddev);
     }
 

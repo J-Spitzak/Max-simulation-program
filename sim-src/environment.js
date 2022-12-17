@@ -7,12 +7,14 @@ class environment {
     populations = {};
 
     printPop(){
+        console.log("this.populations: \n")
         console.log(this.populations);
-        /* for (let i = 0; i < Object.keys(this.populations).length; i++){
-            console.log(Object.keys(this.populations)[i], " = ", this.populations[this.populations[i]].print());
-        } */
-        for (const i in Object.keys(this.populations)){
-            console.log(Object.keys(this.populations)[i], " = ", this.populations[this.populations[i]].print());
+
+        for (let key in this.populations) {
+            console.log("key = " + key);
+            console.log(" \n(this.populations)[key] \n")
+            console.log(this.populations[key]);
+            console.log(this.populations[key], " = ", this.populations[key].print());            
         }
     }
 

@@ -11,6 +11,7 @@ function mapped_number() {
     return num;
 }
 
+
 class NCurve {
 
     num;
@@ -34,6 +35,7 @@ class NCurve {
             else {
                 this.zScore = this.Zscore();
             }
+            console.log("a normalized curve for a population was initialized");
 
         }
 
@@ -46,3 +48,39 @@ class NCurve {
     }
 };
 
+
+/* 
+myCurve = new NCurve(600,500,100);
+console.log("mean = ", myCurve.jwtgvjwv);
+console.log("z score = ", myCurve.Zscore()); */
+
+/* let Curve = class {
+    mean;
+    Curve(mean){
+        this.mean = mean;
+    }
+}
+
+
+let curved = new Curve(10);
+console.log(curved.mean); */
+
+class NCurve {
+    constructor(height, width) {
+      this.height = height;
+      this.width = width;
+    }
+    // Getter
+    get area() {
+      return this.calcArea();
+    }
+    // Method
+    calcArea() {
+      return this.height * this.width;
+    }
+  }
+  
+  const square = new NCurve(10, 10);
+  
+  console.log(square.area); // 100
+  
