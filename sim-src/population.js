@@ -105,20 +105,40 @@ class population {
 
         var importance = []; // the importance of each dependency type
 
-        for (const dependencyType in this.dependencies.length){
+        //console.log(this.dependencies);
+
+
+
+        for (var dp_type_num = 0;  dp_type_num < this.dependencies.length; dp_type_num++){
+
+            var dependencyType = this.dependencies[dp_type_num];
+
 
             var score = 0; // how well the population is doing for each dependency type
 
-            for (var dependency = 0; dependency < dependencyType[0].length; dependency++){
+
+            for (var dependency_num = 0; dependency_num < dependencyType[0].length ; dependency_num++){
                 // the first item  in dependencyType is a list of each...
                 // dependency that supplies for that type, the second is the importance
 
+                /* console.log(dependencyType[0][dependency_num][0]);
+                console.log("\n");
+                console.log(dependency_num);
+                console.log("\n"); */
+
+
+                var dependency = dependencyType[0][dependency_num][0];
+                var dependency_importance = dependencyType[0][dependency_num][1];
+
+
+                
+
                 // how well each dependency source supplies that dependency
-                score += dependency[0].population_curve.Zscore * dependency[1];
+                score += dependency.population_curve.zScore * dependency_importance;
                 // how well a population is doing ^ * it's importance ^
                 
 
-                dependency[0].predatory_decrement += this.population_curve.Zscore * dependency[1] * this.population.stddev;
+                dependency.predatory_decrement += this.population_curve.Zscore * dependency_importance * this.population_curve.stddev;
                 // adds the success of this population to the predatory_decrement of the dependency source...
                 // since the source should do badly if it's predators are doing well
 
@@ -133,7 +153,6 @@ class population {
         for (var i = 0; i < dp_type_scores.length;i++){
             final += dp_type_scores[i] * importance[i];
         }
-
         return final;
     }
 
@@ -174,7 +193,7 @@ var birds = new population(600, 500, 100);
 
 var worms = new population(900, 1000, 150);
 
-birds.dependencies = [[5,[5,worms]]];
+birds.dependencies = [[[[worms, 5]], 5]];
 
 birds.print("birds");
 worms.print("worms");
