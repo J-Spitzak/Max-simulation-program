@@ -81,7 +81,7 @@ class population {
 
     predatory_decrement; // how impacted the population is by it's predators 
 
-    populations(initial_pop, mean, stddev){
+    constructor(initial_pop, mean, stddev){
 
         this.initial = initial_pop;
 
@@ -90,8 +90,6 @@ class population {
         this.dependencies = [];
 
         this.predatory_decrement = 0;
-
-        console.log(this.population_curve.num);
 
     }
 
@@ -103,16 +101,16 @@ class population {
         // returns how well a certain population has done based
         // on the success of it's dependencies
 
-        var dp_type_score = []; // the values stored from each type of dependency
+        var dp_type_scores = []; // the values stored from each type of dependency
 
-        var importance = [];
+        var importance = []; // the importance of each dependency type
 
-        for (var dependencyType = 0; dependencyType < this.dependencies.length; dependencyType++){
+        for (const dependencyType in this.dependencies.length){
 
-            var score = 0;
+            var score = 0; // how well the population is doing for each dependency type
 
             for (var dependency = 0; dependency < dependencyType[0].length; dependency++){
-                // the first item is a list of each...
+                // the first item  in dependencyType is a list of each...
                 // dependency that supplies for that type, the second is the importance
 
                 // how well each dependency source supplies that dependency
@@ -126,13 +124,14 @@ class population {
 
             }
 
-            importance.push(dependencyType[1]);
+            importance.push(dependencyType[1]); // appends the importance of each dependency type to the "importances" list
 
-            dp_type_score.push(score);
+            dp_type_scores.push(score); // appends the score which was stored in the score variable and modified ...
+            // by the giant for block
         }
 
-        for (var i = 0; i < dp_type_score.length;i++){
-            final += dp_type_score[i] * importance[i];
+        for (var i = 0; i < dp_type_scores.length;i++){
+            final += dp_type_scores[i] * importance[i];
         }
 
         return final;
@@ -146,7 +145,7 @@ class population {
         //^ variable is created to store the previose population number
         // so that it can be used by the rest of the simulation
 
-        this.population_curve.num += Math.floor((this.dependencies_calc() / 150) * this.population.stddev * mapped_number());
+        this.population_curve.num += Math.floor((this.dependencies_calc() / 150) * this.population_curve.stddev * mapped_number());
         // ^ adding the success of dependencies to the population
 
         this.population_curve.num -= Math.floor((this.predatory_decrement / 20) * mapped_number());
@@ -164,9 +163,9 @@ class population {
         if (name != null){
             console.log(name, ":");
         }
-        console.log("dependencies: ", this.dependencies);
-        console.log(this.population);
-        console.log("mean ", this.population_curve.mean, "number: ", this.population_curve.num, "standard dev: ", this.population_curve.stddev);
+        //console.log("dependencies: ", this.dependencies);
+        //console.log(this.population);
+        console.log("mean ", this.population_curve.mean, "number: ", this.population_curve.num, "standard dev: ", this.population_curve.stddev, "\n");
     }
 
 };
@@ -177,4 +176,10 @@ var worms = new population(900, 1000, 150);
 
 birds.dependencies = [[5,[5,worms]]];
 
+birds.print("birds");
+worms.print("worms");
+
 birds.increment()
+
+birds.print("birds");
+worms.print("worms");
