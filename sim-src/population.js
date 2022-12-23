@@ -1,72 +1,5 @@
 
 
-function mapped_number() {
-    // creates a random number beetween 0 and 1
-    var num = Math.random();
-
-    //makes the range of the number beetween .5 and 1.5
-    num += .5;
-
-    // the return value is multiplied by a number to create random variation
-    return num;
-}
-
-
-class NCurve {
-
-    num;
-
-    mean;
-
-    stddev;
-
-    zScore;
-
-    constructor(num = null, 
-        mean = null, 
-        stddev = null, 
-        zScore = null) {
-
-            this.num = num;
-            this.mean = mean;
-            this.stddev = stddev;
-            if (zScore != null){
-                this.zScore = zScore;
-            }
-            else {
-                this.zScore = this.Zscore;
-            }
-
-        }
-
-    get Zscore() {
-        return (this.num - this.mean) / this.stddev;
-    }
-
-    get StdDev() {
-        return (this.num - this.mean) / this.zScore;
-    }
-
-    get num() {
-        return this.num;
-    }
-
-    get mean() {
-        return this.mean;
-    }
-  }
-  
-
-
-// delete everything above
-
-
-
-
-
-
-
-
 
 // (population.js)
 
@@ -121,10 +54,7 @@ class population {
                 // the first item  in dependencyType is a list of each...
                 // dependency that supplies for that type, the second is the importance
 
-                /* console.log(dependencyType[0][dependency_num][0]);
-                console.log("\n");
-                console.log(dependency_num);
-                console.log("\n"); */
+                
 
 
                 var dependency = dependencyType[0][dependency_num][0];
@@ -182,23 +112,11 @@ class population {
         if (name != null){
             console.log(name, ":");
         }
-        //console.log("dependencies: ", this.dependencies);
-        //console.log(this.population);
+
         console.log("mean ", this.population_curve.mean, "number: ", this.population_curve.num, "standard dev: ", this.population_curve.stddev, "\n");
     }
 
 };
 
-var birds = new population(600, 500, 100);
 
-var worms = new population(900, 1000, 150);
 
-birds.dependencies = [[[[worms, 5]], 5]];
-
-birds.print("birds");
-worms.print("worms");
-
-birds.increment()
-
-birds.print("birds");
-worms.print("worms");
