@@ -20,7 +20,8 @@ The project is under a MIT license, feel free to do whatever you want with it. F
   - helper_functions.js has a function for generatin a random number and a "normalized curve" class which is used by population.js to encapsulate the state of a population
   - population.js contains a population class. A population is just as it sound, it has dependencies that are other populations and my be a dependency itself. It is used in environment.js
   - environment.js contains a class that defines the environment. in addition to the run function which calls the population increment function and manages things like extinction and printing the status it also contains functions like pop_setup for creating a simple set of populations and the origional python version even had the setup function which was a command line utility for generating sets of populations
-  - TODO: simulation.js and main.js
+  - main.js contains the main source code for the website and includes both jdh and the simulation files
+  - simulation.js just includes the simulation files, I don't use it anymore but I think I used it with node for debugging
 - the js directory contains the combined javascript files, this is how jdh works, it also contains a filler document so that git doesn't ignore the directory
 - README.md is the README, LICENSE is the license and index.html is the html file, I think those are self explanatory
 - MAKE combines the javascript files into a single file in the js directory in a 2 step process
