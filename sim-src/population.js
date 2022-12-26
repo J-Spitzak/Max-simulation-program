@@ -14,6 +14,8 @@ class population {
 
     predatory_decrement; // how impacted the population is by it's predators 
 
+    data = []; // a list of the population number for every instance of the run function
+
     constructor(initial_pop, mean, stddev){
 
         this.initial = initial_pop;
@@ -23,6 +25,8 @@ class population {
         this.dependencies = [];
 
         this.predatory_decrement = 0;
+
+        this.data.push(initial_pop);
 
     }
 
@@ -104,6 +108,8 @@ class population {
         // ^ resseting the score for success of the predators
 
         // returning previose population number to stay consistent 
+
+        this.data.push(this.population_curve.num);
 
         return pop;
     }

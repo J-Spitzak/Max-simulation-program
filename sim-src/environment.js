@@ -8,6 +8,10 @@ class environment {
 
     populations = {};
 
+    env_data = {};
+
+    stop;
+
     printPop(){
         console.log("this.populations: \n")
         console.log(this.populations);
@@ -32,6 +36,7 @@ class environment {
     run(){
 
         var iteration = 0;
+
 
         run:
 
@@ -63,7 +68,15 @@ class environment {
             this.populations = New;
 
             iteration++;
+
+            if (iteration == this.stop){
+                break run;
+            }
             
+        }
+
+        for (const population in this.populations) {
+            this.env_data[population] = this.populations[population].data;
         }
     }
 }

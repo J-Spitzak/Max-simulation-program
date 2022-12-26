@@ -22,6 +22,15 @@
 //My code (main.js)
 
 
+env = new environment();
+env.pop_setup();
+env.run();
+console.log(env.env_data);
+
+
+
+
+
 testDrawing = new JDHDrawing( "testDraw" );
 bg = new Frame( 0, 0, 1, 1 );
 bg.setCombinedPaint( rgb( 120, 150, 150 ) );
