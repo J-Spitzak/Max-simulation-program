@@ -37,6 +37,10 @@ class environment {
 
         var iteration = 0;
 
+        for (const population in this.populations) {
+            this.env_data[population] = [];
+        }
+
 
         run:
 
@@ -58,6 +62,8 @@ class environment {
                     console.log(population, "went extinct at iteration", iteration + 1);
                     extinct.push(population);
                 }
+
+                this.env_data[population] = this.populations[population].data;
             }
 
             for (const extinct_index in extinct){
@@ -75,9 +81,9 @@ class environment {
             
         }
 
-        for (const population in this.populations) {
+        /* for (const population in this.populations) {
             this.env_data[population] = this.populations[population].data;
-        }
+        } */
     }
 }
 
