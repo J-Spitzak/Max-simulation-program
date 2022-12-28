@@ -25,7 +25,8 @@
 env = new environment();
 env.pop_setup();
 env.run();
-console.log(env.env_data);
+env.stop = 10;
+//console.log(env.env_data);
 
 
 
@@ -65,8 +66,20 @@ newPlot = new XYPlot( 0.5, 0.1, .4, .8 );
 newPlot.setXLimits( 0.0, 100.0 );
 newPlot.setYLimits( -90.0, 90.0 );
 
+var xs = [];
+for (var i  = 0; i < env.stop; i++){
+    xs.push( i );
+}
 
-newPlot.addPoints( [1,5,10], [2,5,-20]);
+
+console.log("xs: ", xs );
+
+var i = 0;
+for (const environment_data in env.env_data){
+    console.log("environment data: ", environment_data);
+    newPlot.addPoints( xs, [2,5,-20]);
+}
+
 
 testDrawing.add( newPlot );
 

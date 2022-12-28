@@ -42,7 +42,6 @@ class environment {
         }
 
 
-        run:
 
         while(true){
 
@@ -51,6 +50,8 @@ class environment {
             // isolated from old ones that the simulation is running on
 
             var extinct = [];
+            
+            var plz_break = false;
 
             for (const population in New) {
 
@@ -69,16 +70,19 @@ class environment {
             for (const extinct_index in extinct){
                 var ex = extinct[extinct_index];
                 delete New[ex];
-                break run;
+                plz_break = true;
             }
             this.populations = New;
 
             iteration++;
 
             if (iteration == this.stop){
-                break run;
+                plz_break = true;
             }
-            
+
+            if (plz_break){
+                break;
+            }            
         }
 
         /* for (const population in this.populations) {
