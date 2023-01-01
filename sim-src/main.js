@@ -24,8 +24,8 @@
 
 env = new environment();
 env.pop_setup();
-env.run();
 env.stop = 10;
+env.run();
 //console.log(env.env_data);
 
 
@@ -63,11 +63,15 @@ testDrawing.add( input2 );
 
 
 newPlot = new XYPlot( 0.5, 0.1, .4, .8 );
-newPlot.setXLimits( 0.0, 100.0 );
-newPlot.setYLimits( -90.0, 90.0 );
+//newPlot.setXLimits( 0.0, 100.0 );
+//newPlot.setYLimits( -90.0, 90.0 );
+
+newPlot.setSoftXLimits( true );
+newPlot.setSoftYLimits( true );
+
 
 var xs = [];
-for (var i  = 0; i < env.stop; i++){
+for (var i  = 0; i < env.stop+1; i++){
     xs.push( i );
 }
 
@@ -77,7 +81,13 @@ console.log("xs: ", xs );
 var i = 0;
 for (const environment_data in env.env_data){
     console.log("environment data: ", environment_data);
-    newPlot.addPoints( xs, [2,5,-20]);
+    console.log("env.env_data[environment_data]: ", env.env_data[environment_data]);
+    //newPlot.addPoints( xs, env.env_data[environment_data]);
+    newPlot.addPoints( [0,1,2,3,4,5,6,7,8,9,10], [5,5,4,4,3,3,2,2,1,1,0]);
+    i++;
+    if (i>0){
+        break;
+    }
 }
 
 

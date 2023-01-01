@@ -12,6 +12,8 @@ class environment {
 
     stop;
 
+    runtimes = 0;
+
     printPop(){
         console.log("this.populations: \n")
         console.log(this.populations);
@@ -35,29 +37,43 @@ class environment {
 
     run(){
 
+        console.log("stop point: ", this.stop);
+
+
+        this.runtimes++
+        console.log("it ran again", this.runtimes);
+        if (this.stop == undefined){
+            console.log("it got the f**k out of there");
+            return;
+        }
+
         var iteration = 0;
+
 
         for (const population in this.populations) {
             this.env_data[population] = [];
         }
 
-
+        var plz_break = false;
+  
 
         while(true){
+
+            console.log(iteration);
+
+
 
             var New = this.populations;
             // ^ creating new copy of population values to store new values...
             // isolated from old ones that the simulation is running on
 
             var extinct = [];
-            
-            var plz_break = false;
 
             for (const population in New) {
 
                 New[population].increment();
 
-                console.log(`${population}: ${New[population].population_curve.num}`);
+                //console.log(`${population}: ${New[population].population_curve.num}`);
                 
                 if (New[population].population_curve.num <= 0){
                     console.log(population, "went extinct at iteration", iteration + 1);
@@ -67,23 +83,28 @@ class environment {
                 this.env_data[population] = this.populations[population].data;
             }
 
+            iteration++;
+
+
+            if (iteration >= this.stop){
+                plz_break = true;
+                console.log("it has surpassed the break point!", this.stop);
+            }
+
             for (const extinct_index in extinct){
                 var ex = extinct[extinct_index];
                 delete New[ex];
                 plz_break = true;
             }
             this.populations = New;
-
-            iteration++;
-
-            if (iteration == this.stop){
-                plz_break = true;
-            }
+            
 
             if (plz_break){
-                break;
+                console.log("i'm broke");
+                return;
             }            
         }
+
 
         /* for (const population in this.populations) {
             this.env_data[population] = this.populations[population].data;
