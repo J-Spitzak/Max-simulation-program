@@ -1,5 +1,5 @@
 # Max-simulation-program
-A project by Max and Jason to simulate bird populations in Rock Creek Parkway
+A project by Max and Jason to simulate bird populations in Rock Creek Park
 
 
 We (Max and Jason) are students of Arlington Tech High School, part of the Arlington Career Center (ACC). This project origionally started as Max's senior capstone project but is now a seperate project
