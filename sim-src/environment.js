@@ -37,13 +37,9 @@ class environment {
 
     run(){
 
-        console.log("stop point: ", this.stop);
-
 
         this.runtimes++
-        console.log("it ran again", this.runtimes);
         if (this.stop == undefined){
-            console.log("it got the f**k out of there");
             return;
         }
 
@@ -59,7 +55,6 @@ class environment {
 
         while(true){
 
-            console.log(iteration);
 
 
 
@@ -76,7 +71,6 @@ class environment {
                 //console.log(`${population}: ${New[population].population_curve.num}`);
                 
                 if (New[population].population_curve.num <= 0){
-                    console.log(population, "went extinct at iteration", iteration + 1);
                     extinct.push(population);
                 }
 
@@ -88,7 +82,6 @@ class environment {
 
             if (iteration >= this.stop){
                 plz_break = true;
-                console.log("it has surpassed the break point!", this.stop);
             }
 
             for (const extinct_index in extinct){
@@ -100,7 +93,6 @@ class environment {
             
 
             if (plz_break){
-                console.log("i'm broke");
                 return;
             }            
         }

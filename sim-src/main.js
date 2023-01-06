@@ -66,8 +66,6 @@ function run(stop){
 
     var i = 0;
     for (const environment_data in env.env_data){
-        console.log("environment data: ", environment_data);
-        console.log("env.env_data[environment_data]: ", env.env_data[environment_data]);
         newPlot.addPoints( xs, env.env_data[environment_data]);
         i++;
         if (i>0){
@@ -82,32 +80,20 @@ function run(stop){
 
 
 
-//// input fields from template   ////////////////////////
-text1 = new Text( 100, 95, "TextInput:" );
-testDrawing.add( text1 );
-input1 = new TextInput( 100, 100, 200, 30 );
-text2 = new Text( 400, 95, "TextOutput:" );
-testDrawing.add( text2 );
-output1 = new TextOutput( 400, 100, 200, 30 );
-output1.setText( "" );
-testDrawing.add( output1 );
+//// input fields   /////////////////////////////////////
 
-function input1CB() {
-    output1.setText( input1.getText() );
-}
-
-input1.setCallback( input1CB );
-testDrawing.add( input1 );
-text3 = new Text( 100, 245, "stop point:" );
+text3 = new Text( 75, 145, "stop point:" );
 testDrawing.add( text3 );
-input2 = new ValueInput( 100, 250, 200, 30 );
+
+input2 = new ValueInput( 75, 150, 200, 30 );
 //input2.setPrecision( 5 );
 testDrawing.add( input2 ); 
 
 
-runButton = new BoxButton( 250, 350, 200, 40, "Run!!!" );
+runButton = new BoxButton( 350, 150, 200, 40, "Run!!!" );
 runButton.setCallback( run, 50 );
 runButton.setHoverPaint( rgb( 255, 0, 0 ) );
+
 testDrawing.add( runButton );
 testDrawing.add( newPlot );
 /////////////////////////////////////////////////////////
