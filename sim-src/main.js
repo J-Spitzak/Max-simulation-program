@@ -44,6 +44,7 @@ newPlot = new XYPlot( 0.5, 0.1, .4, .8 );
 
 function run(stop){
 
+    stop = stop.getValue();
 
     //// creating the environment
     env = new environment();
@@ -91,7 +92,7 @@ testDrawing.add( input2 );
 
 
 runButton = new BoxButton( 350, 150, 200, 40, "Run!!!" );
-runButton.setCallback( run, 50 );
+runButton.setCallback( run, input2 );
 runButton.setHoverPaint( rgb( 255, 0, 0 ) );
 
 testDrawing.add( runButton );
